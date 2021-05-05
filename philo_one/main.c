@@ -8,8 +8,6 @@
 //pthread_join - ждет завершения потока
 //pthread_mutex_init - мютекс
 
-// usleep(1000000);
-
 void	*philo(void	*philo_tmp)
 {
 	t_philo	*philo;
@@ -27,27 +25,45 @@ void	*philo(void	*philo_tmp)
 	while (1)
 	{
 		pthread_mutex_lock(philo->lfork);
+		pthread_mutex_lock(philo->chat);
 		printf("%zu %d has taken a fork\n", get_time(philo->begin_time), philo->num);
+		pthread_mutex_unlock(philo->chat);
 		pthread_mutex_lock(philo->rfork);
-		printf("%zu %d is eating\n", get_time(philo->begin_time),  philo->num);
-		usleep(philo->time_to_eat);
+		pthread_mutex_lock(philo->chat);
+		printf("%zu %d has taken a fork\n", get_time(philo->begin_time), philo->num);
+		pthread_mutex_unlock(philo->chat);
+		pthread_mutex_lock(philo->chat);
+		printf("%zu %d is eating\n", get_time(philo->begin_time), philo->num);
+		philo->begin_life = get_time(0);
+		pthread_mutex_unlock(philo->chat);
+		my_usleep(philo->time_to_eat);
 		pthread_mutex_unlock(philo->lfork);
 		pthread_mutex_unlock(philo->rfork);
-	
-		printf("%zu %d is sleeping\n", get_time(philo->begin_time),  philo->num);
-		usleep(philo->time_to_sleep);
+		// if (philo->must_eat != -1)
+		// {
+		// 	--philo->must_eat;
+		// 	if (philo->must_eat == 0)
+		// 		return (NULL);
+		// }
+		pthread_mutex_lock(philo->chat);
+		printf("%zu %d is sleeping\n", get_time(philo->begin_time), philo->num);
+		pthread_mutex_unlock(philo->chat);
 
-		printf("%zu %d is thinking\n", get_time(philo->begin_time),  philo->num);
+		my_usleep(philo->time_to_sleep);
+
+		pthread_mutex_lock(philo->chat);
+		printf("%zu %d is thinking\n", get_time(philo->begin_time), philo->num);
+		pthread_mutex_unlock(philo->chat);
 	}
 	return (NULL);
 }
 
-void	*count_to_die(void *date)
+void	*count_to_die(void *date_tmp)
 {
-	t_data *data;
 	int		i;
+	t_data	*data;
 
-	data = date;
+	data = date_tmp;
 	while (1)
 	{
 		i = -1;
@@ -55,7 +71,8 @@ void	*count_to_die(void *date)
 		{
 			if (data->time_to_die < get_time(data->array_philo[i].begin_life) && data->array_philo[i].begin_life != 0)
 			{
-				printf("%zu %d died\n", get_time(data->array_philo[i].begin_time),  i + 1);
+				pthread_mutex_lock(&data->chat);
+				printf("%zu %d died\n", get_time(data->array_philo[i].begin_time), i + 1);
 				return (NULL);
 			}
 		}
@@ -63,17 +80,37 @@ void	*count_to_die(void *date)
 	return (NULL);
 }
 
+// void *waiter_watching(void *data_tmp)
+// {
+// 	int		i;
+// 	t_data	*data;
+
+// 	data = data_tmp;
+// 	while (1)
+// 	{
+// 		i = -1;
+// 		while (++i < data->count_philo)
+// 		{
+// 			if (data->array_philo[i].i_ate == 1)
+
+// 		}
+// 	}
+// }
+
 void	start_philo(t_data *data)
 {
-	int i;
+	int				i;
 	pthread_t		cracken;
+	// pthread_t		waiter;
 
 	i = -1;
 	pthread_create(&cracken, NULL, count_to_die, (void *)data);
+	// pthread_create(&waiter, NULL, waiter_watching, (void *)data);
 	while (++i < data->count_philo)
 		pthread_create(&data->array_philo[i].thread, NULL, philo, (void *)&data->array_philo[i]);
 	i = -1;
 	pthread_join(cracken, NULL);
+	pthread_mutex_destroy(&data->chat);
 	// while (++i < data->count_philo)
 	// 	pthread_join(data->array_philo[i].thread, NULL);
 	// Destroy and free

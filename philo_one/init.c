@@ -9,9 +9,11 @@ static  void	init_philo(t_data *data, int argc)
 	forks = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * data->count_philo);
 	while (++i < data->count_philo)
 		pthread_mutex_init(&forks[i], NULL);
+	pthread_mutex_init(&data->chat, NULL);
 	i = -1;
 	while (++i < data->count_philo)
 	{
+		data->array_philo[i].chat = &data->chat;
 		data->array_philo[i].num = i + 1;
 		data->array_philo[i].lfork = &forks[i + 1];
 		data->array_philo[i].rfork = &forks[(i + 2) % data->count_philo];
@@ -20,6 +22,8 @@ static  void	init_philo(t_data *data, int argc)
 		data->array_philo[i].time_to_sleep = data->time_to_sleep;
 		if (argc == 6)
 			data->array_philo[i].must_eat = data->must_eat;
+		else
+			data->array_philo[i].must_eat = -1;
 		data->array_philo[i].begin_time = data->begin_time;
 		data->array_philo[i].begin_life = 0;
 	}
