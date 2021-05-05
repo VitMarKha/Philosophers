@@ -21,20 +21,44 @@ void	*philo(void	*philo_tmp)
 	// 	if (philo->count_philo == philo->num)
 	// 		break ;
 	// }
-	usleep(1000000);
+	// usleep(1000000);
+	// gettimeofday(&philo->tv1, &philo->tz);
+	philo->begin_life = get_time(0);
 	while (1)
 	{
 		pthread_mutex_lock(philo->lfork);
-		printf(" %d has taken a fork\n", philo->num);
+		printf("%zu %d has taken a fork\n", get_time(philo->begin_time), philo->num);
 		pthread_mutex_lock(philo->rfork);
-		printf(" %d is eating\n", philo->num);
-		usleep(1000000);
+		printf("%zu %d is eating\n", get_time(philo->begin_time),  philo->num);
+		usleep(philo->time_to_eat);
 		pthread_mutex_unlock(philo->lfork);
 		pthread_mutex_unlock(philo->rfork);
-		printf(" %d is sleeping\n", philo->num);
-		usleep(1000000);
-		printf(" %d is thinking\n", philo->num);
-		printf(" %d died\n", philo->num);
+	
+		printf("%zu %d is sleeping\n", get_time(philo->begin_time),  philo->num);
+		usleep(philo->time_to_sleep);
+
+		printf("%zu %d is thinking\n", get_time(philo->begin_time),  philo->num);
+	}
+	return (NULL);
+}
+
+void	*count_to_die(void *date)
+{
+	t_data *data;
+	int		i;
+
+	data = date;
+	while (1)
+	{
+		i = -1;
+		while (++i < data->count_philo)
+		{
+			if (data->time_to_die < get_time(data->array_philo[i].begin_life) && data->array_philo[i].begin_life != 0)
+			{
+				printf("%zu %d died\n", get_time(data->array_philo[i].begin_time),  i + 1);
+				return (NULL);
+			}
+		}
 	}
 	return (NULL);
 }
@@ -42,13 +66,16 @@ void	*philo(void	*philo_tmp)
 void	start_philo(t_data *data)
 {
 	int i;
+	pthread_t		cracken;
 
 	i = -1;
+	pthread_create(&cracken, NULL, count_to_die, (void *)data);
 	while (++i < data->count_philo)
 		pthread_create(&data->array_philo[i].thread, NULL, philo, (void *)&data->array_philo[i]);
 	i = -1;
-	while (++i < data->count_philo)
-		pthread_join(data->array_philo[i].thread, NULL);
+	pthread_join(cracken, NULL);
+	// while (++i < data->count_philo)
+	// 	pthread_join(data->array_philo[i].thread, NULL);
 	// Destroy and free
 }
 

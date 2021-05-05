@@ -1,6 +1,6 @@
 #include "philo_one.h"
 
-static  void	init_philo(t_data *data)
+static  void	init_philo(t_data *data, int argc)
 {
 	int i;
 	pthread_mutex_t *forks;
@@ -15,11 +15,19 @@ static  void	init_philo(t_data *data)
 		data->array_philo[i].num = i + 1;
 		data->array_philo[i].lfork = &forks[i + 1];
 		data->array_philo[i].rfork = &forks[(i + 2) % data->count_philo];
+		data->array_philo[i].time_to_die = data->time_to_die;
+		data->array_philo[i].time_to_eat = data->time_to_eat;
+		data->array_philo[i].time_to_sleep = data->time_to_sleep;
+		if (argc == 6)
+			data->array_philo[i].must_eat = data->must_eat;
+		data->array_philo[i].begin_time = data->begin_time;
+		data->array_philo[i].begin_life = 0;
 	}
 }
 
 void	init_data(char **argv, int argc, t_data *data)
 {
+	data->begin_time = get_time(0);
 	data->count_philo = ft_atoi(argv[1]);
 	data->time_to_die = ft_atoi(argv[2]);
 	data->time_to_eat = ft_atoi(argv[3]);
@@ -29,5 +37,5 @@ void	init_data(char **argv, int argc, t_data *data)
 	else
 		data->must_eat = 0;
 	data->array_philo = ft_calloc(data->count_philo, sizeof(t_philo *));
-	init_philo(data);
+	init_philo(data, argc);
 }
