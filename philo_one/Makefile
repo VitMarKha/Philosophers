@@ -7,7 +7,8 @@ HEADER = philo_one.h
 SRC = main.c \
 	ft_atoi.c \
 	ft_calloc.c \
-	init.c
+	init.c \
+	time.c
 
 OBJ = $(SRC:.c=.o)
 
