@@ -32,67 +32,45 @@ long time_stop(void)
 	return (dtv.tv_sec * 1000 + dtv.tv_usec / 1000);
 }
 
-void	*philo(void	*data_tmp)
+void	*philo(void	*philo_tmp)
 {
-	int		my_num;
-	t_data	*data;
+	t_philo	*philo;
 
-	data = data_tmp;
-	my_num = data->array_philo[data->count_philo].num;
+	philo = (t_philo *)philo_tmp;
+	// while (1)
+	// {
+	// 	printf("Hello\n");
+	// 	if (data->count_philo == 0)
+	// 		break ;
+	// }
 	while (1)
 	{
-		printf("Hello\n");
-		if (data->count_philo == 0)
-			break ;
+		pthread_mutex_lock(philo->lfork);
+		printf(" %d has taken a fork\n", philo->num);
+		pthread_mutex_lock(philo->rfork);
+		printf(" %d is eating\n", philo->num);
+		usleep(1000000);
+		pthread_mutex_unlock(philo->lfork);
+		pthread_mutex_unlock(philo->rfork);
+		printf(" %d is sleeping\n", philo->num);
+		usleep(1000000);
+		printf(" %d is thinking\n", philo->num);
+		printf(" %d died\n", philo->num);
 	}
-	while (1)
-	{
-		pthread_mutex_lock(&data->array_philo[my_num].mutex);
-		printf(" %d has taken a fork\n", my_num);
-		pthread_mutex_unlock(&data->array_philo[my_num].mutex);
-		printf(" %d is eating\n", my_num);
-		printf(" %d is sleeping\n", my_num);
-		printf(" %d is thinking\n", my_num);
-		printf(" %d died\n", my_num);
-	}
-	pthread_mutex_destroy(&data->array_philo[my_num].mutex);
 	return (NULL);
 }
 
-void	readiness_philo(t_data *data)
+void	start_philo(t_data *data)
 {
-	++data->count_philo;
-	while (--data->count_philo)
-		pthread_create(&data->array_philo[data->count_philo].thread, NULL, philo, (void *)data);
-	time_start();
-}
+	int i = -1;
 
-void	init_philo(t_data *data)
-{
-	int i;
-
+	while (++i < data->count_philo)
+		pthread_create(&data->array_philo[i].thread, NULL, philo, (void *)&data->array_philo[i]);
 	i = -1;
 	while (++i < data->count_philo)
-	{
-		data->array_philo[i].num = i;
-		data->array_philo[i].lfork = i;
-		data->array_philo[i].rfork = (i + 1) % data->count_philo;
-	}
-	pthread_mutex_init(&data->array_philo[i].mutex, NULL);
-}
-
-void	init_data(char **argv, int argc, t_data *data)
-{
-	data->count_philo = ft_atoi(argv[1]);
-	data->time_to_die = ft_atoi(argv[2]);
-	data->time_to_eat = ft_atoi(argv[3]);
-	data->time_to_sleep = ft_atoi(argv[4]);
-	if (argc == 6)
-		data->must_eat = ft_atoi(argv[5]);
-	else
-		data->must_eat = 0;
-	data->array_philo = ft_calloc(data->count_philo, sizeof(t_philo *));
-	init_philo(data);
+		pthread_join(data->array_philo[i].thread, NULL);
+	// Destroy
+	// time_start();
 }
 
 int	main(int argc, char **argv)
@@ -103,7 +81,7 @@ int	main(int argc, char **argv)
 		return (1);
 	else
 		init_data(argv, argc, &data);
-	readiness_philo(&data);
+	start_philo(&data);
 	while(1)
 		;
 	printf("Time: %ld\n", time_stop());

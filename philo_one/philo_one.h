@@ -13,9 +13,8 @@
 typedef struct s_philo
 {
 	int				num;
-	int				lfork;
-	int				rfork;
-	pthread_mutex_t	mutex;
+	pthread_mutex_t	*lfork;
+	pthread_mutex_t	*rfork;
 	pthread_t		thread;
 }				t_philo;
 
@@ -33,5 +32,7 @@ typedef struct s_data
 int		ft_atoi(const char *str);
 
 void	*ft_calloc(size_t count, size_t size);
+
+void	init_data(char **argv, int argc, t_data *data);
 
 #endif
