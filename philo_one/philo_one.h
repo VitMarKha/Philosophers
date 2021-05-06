@@ -47,4 +47,18 @@ ssize_t get_time(ssize_t begin_time);
 
 void	my_usleep(ssize_t time);
 
+void    take_fork(t_philo *philo);
+
+void	put_fork(t_philo *philo);
+
+void	eating(t_philo *philo);
+
+void	sleeping(t_philo *philo);
+
+void	thinking(t_philo *philo);
+
+int		ft_atoi(const char *str);
+
+void	*ft_calloc(size_t count, size_t size);
+
 #endif

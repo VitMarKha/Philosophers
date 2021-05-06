@@ -14,9 +14,9 @@ static  void	init_philo(t_data *data, int argc)
 	while (++i < data->count_philo)
 	{
 		data->array_philo[i].chat = &data->chat;
-		data->array_philo[i].num = i + 1;
-		data->array_philo[i].lfork = &forks[i + 1];
-		data->array_philo[i].rfork = &forks[(i + 2) % data->count_philo];
+		data->array_philo[i].num = i;
+		data->array_philo[i].lfork = &forks[i];
+		data->array_philo[i].rfork = &forks[(i + 1) % data->count_philo];
 		data->array_philo[i].time_to_die = data->time_to_die;
 		data->array_philo[i].time_to_eat = data->time_to_eat;
 		data->array_philo[i].time_to_sleep = data->time_to_sleep;
@@ -25,7 +25,7 @@ static  void	init_philo(t_data *data, int argc)
 		else
 			data->array_philo[i].must_eat = -1;
 		data->array_philo[i].begin_time = data->begin_time;
-		data->array_philo[i].begin_life = 0;
+		data->array_philo[i].begin_life = data->begin_time;
 	}
 }
 

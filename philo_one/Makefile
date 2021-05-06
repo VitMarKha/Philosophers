@@ -5,10 +5,10 @@ NAME = philo_one
 HEADER = philo_one.h
 
 SRC = main.c \
-	ft_atoi.c \
-	ft_calloc.c \
 	init.c \
-	time.c
+	time.c \
+	ouroboros.c \
+	utils.c
 
 OBJ = $(SRC:.c=.o)
 
