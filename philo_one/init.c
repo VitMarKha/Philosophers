@@ -1,12 +1,12 @@
 #include "philo_one.h"
 
-static  void	init_philo(t_data *data, int argc)
+static	void	init_philo(t_data *data, int argc)
 {
-	int i;
-	pthread_mutex_t *forks;
+	int				i;
+	pthread_mutex_t	*forks;
 
 	i = -1;
-	forks = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * data->count_philo);
+	forks = ft_calloc(data->count_philo, sizeof(pthread_mutex_t));
 	while (++i < data->count_philo)
 		pthread_mutex_init(&forks[i], NULL);
 	pthread_mutex_init(&data->chat, NULL);

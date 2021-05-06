@@ -2,7 +2,7 @@
 
 void	my_usleep(ssize_t time)
 {
-	struct	timeval	t1;
+	struct timeval	t1;
 	ssize_t			timing;
 
 	gettimeofday(&t1, NULL);
@@ -14,9 +14,9 @@ void	my_usleep(ssize_t time)
 	}
 }
 
-ssize_t get_time(ssize_t begin_time)
+ssize_t	get_time(ssize_t begin_time)
 {
-	struct	timeval	t1;
+	struct timeval	t1;
 
 	gettimeofday(&t1, NULL);
 	return ((t1.tv_sec * 1000 + t1.tv_usec / 1000) - begin_time);

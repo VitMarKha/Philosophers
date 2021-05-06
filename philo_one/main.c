@@ -1,6 +1,6 @@
 #include "philo_one.h"
 
-void	*philo(void	*philo_tmp)
+static	void	*philo(void	*philo_tmp)
 {
 	t_philo	*philo;
 
@@ -16,13 +16,26 @@ void	*philo(void	*philo_tmp)
 			if (philo->must_eat != 0)
 				--philo->must_eat;
 		}
-		sleeping(philo);
-		thinking(philo);
+		sleeping_thinking(philo);
 	}
 	return (NULL);
 }
 
-void	*count_to_die(void *date_tmp)
+static	int	check_for_death(t_data *data, int *did_everyone_eat, int *i)
+{
+	if (data->time_to_die < get_time(data->array_philo[*i].begin_life))
+	{
+		pthread_mutex_lock(&data->chat);
+		printf("%zu %d died\n",
+			get_time(data->array_philo[*i].begin_time), *i + 1);
+		return (1);
+	}
+	if (data->array_philo[*i].must_eat == 0)
+		--*did_everyone_eat;
+	return (0);
+}
+
+static	void	*monitoring(void *date_tmp)
 {
 	int		i;
 	int		did_everyone_eat;
@@ -35,14 +48,8 @@ void	*count_to_die(void *date_tmp)
 		did_everyone_eat = data->count_philo;
 		while (++i < data->count_philo)
 		{
-			if (data->time_to_die < get_time(data->array_philo[i].begin_life))
-			{
-				pthread_mutex_lock(&data->chat);
-				printf("%zu %d died\n", get_time(data->array_philo[i].begin_time), i + 1);
+			if (check_for_death(data, &did_everyone_eat, &i))
 				return (NULL);
-			}
-			if (data->array_philo[i].must_eat == 0)
-				--did_everyone_eat;
 		}
 		if (did_everyone_eat == 0)
 		{
@@ -53,22 +60,23 @@ void	*count_to_die(void *date_tmp)
 	return (NULL);
 }
 
-void	start_philo(t_data *data)
+static	void	start_philo(t_data *data)
 {
 	int				i;
 	pthread_t		cracken;
 
 	i = -1;
-	pthread_create(&cracken, NULL, count_to_die, (void *)data);
+	pthread_create(&cracken, NULL, monitoring, (void *)data);
 	while (++i < data->count_philo)
-		pthread_create(&data->array_philo[i].thread, NULL, philo, (void *)&data->array_philo[i]);
+		pthread_create(&data->array_philo[i].thread,
+			NULL, philo, (void *)&data->array_philo[i]);
 	pthread_join(cracken, NULL);
 	pthread_mutex_destroy(&data->chat);
 }
 
 int	main(int argc, char **argv)
 {
-	t_data data;
+	t_data	data;
 
 	if (argc != 6 && argc != 5)
 		return (1);

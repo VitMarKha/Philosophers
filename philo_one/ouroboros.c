@@ -1,29 +1,36 @@
 #include "philo_one.h"
 
-void    take_fork(t_philo *philo)
+static	void	take_fork_odd(t_philo *philo)
+{
+	pthread_mutex_lock(philo->lfork);
+	pthread_mutex_lock(philo->chat);
+	printf("%zu %d has taken a fork\n",
+		get_time(philo->begin_time), philo->num + 1);
+	pthread_mutex_unlock(philo->chat);
+	pthread_mutex_lock(philo->rfork);
+	pthread_mutex_lock(philo->chat);
+	printf("%zu %d has taken a fork\n",
+		get_time(philo->begin_time), philo->num + 1);
+	pthread_mutex_unlock(philo->chat);
+}
+
+void	take_fork(t_philo *philo)
 {
 	if (philo->num % 2 == 0)
 	{
 		pthread_mutex_lock(philo->rfork);
 		pthread_mutex_lock(philo->chat);
-		printf("%zu %d has taken a fork\n", get_time(philo->begin_time), philo->num + 1);
+		printf("%zu %d has taken a fork\n",
+			get_time(philo->begin_time), philo->num + 1);
 		pthread_mutex_unlock(philo->chat);
 		pthread_mutex_lock(philo->lfork);
 		pthread_mutex_lock(philo->chat);
-		printf("%zu %d has taken a fork\n", get_time(philo->begin_time), philo->num + 1);
+		printf("%zu %d has taken a fork\n",
+			get_time(philo->begin_time), philo->num + 1);
 		pthread_mutex_unlock(philo->chat);
 	}
 	else
-	{
-		pthread_mutex_lock(philo->lfork);
-		pthread_mutex_lock(philo->chat);
-		printf("%zu %d has taken a fork\n", get_time(philo->begin_time), philo->num + 1);
-		pthread_mutex_unlock(philo->chat);
-		pthread_mutex_lock(philo->rfork);
-		pthread_mutex_lock(philo->chat);
-		printf("%zu %d has taken a fork\n", get_time(philo->begin_time), philo->num + 1);
-		pthread_mutex_unlock(philo->chat);
-	}
+		take_fork_odd(philo);
 }
 
 void	put_fork(t_philo *philo)
@@ -49,16 +56,12 @@ void	eating(t_philo *philo)
 	my_usleep(philo->time_to_eat);
 }
 
-void	sleeping(t_philo *philo)
+void	sleeping_thinking(t_philo *philo)
 {
 	pthread_mutex_lock(philo->chat);
 	printf("%zu %d is sleeping\n", get_time(philo->begin_time), philo->num + 1);
 	pthread_mutex_unlock(philo->chat);
 	my_usleep(philo->time_to_sleep);
-}
-
-void	thinking(t_philo *philo)
-{
 	pthread_mutex_lock(philo->chat);
 	printf("%zu %d is thinking\n", get_time(philo->begin_time), philo->num + 1);
 	pthread_mutex_unlock(philo->chat);
