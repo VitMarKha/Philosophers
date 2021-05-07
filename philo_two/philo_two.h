@@ -12,8 +12,6 @@
 typedef struct s_philo
 {
 	int				num;
-	sem_t			*chat;
-	sem_t			*bunch_forks;
 	pthread_t		thread;
 
 	ssize_t			time_to_die;
@@ -26,6 +24,7 @@ typedef struct s_philo
 
 typedef struct s_data
 {
+	int				pos_philo;
 	int				count_philo;
 	ssize_t			time_to_die;
 	ssize_t			time_to_eat;
@@ -33,6 +32,7 @@ typedef struct s_data
 	ssize_t			must_eat;
 	sem_t			*chat;
 	sem_t			*bunch_forks;
+	sem_t			*waiter_stop;
 
 	t_philo			*array_philo;
 	ssize_t			begin_time;
@@ -48,18 +48,16 @@ ssize_t	get_time(ssize_t begin_time);
 
 void	my_usleep(ssize_t time);
 
-void	take_fork(t_philo *philo);
+void	take_fork(t_data *data, int number);
 
-void	put_fork(t_philo *philo);
+void	put_fork(t_data *data, int number);
 
-void	eating(t_philo *philo);
+void	eating(t_data *data, int number);
 
-void	sleeping_thinking(t_philo *philo);
+void	sleeping_thinking(t_data *data, int number);
 
 int		ft_atoi(const char *str);
 
 void	*ft_calloc(size_t count, size_t size);
-
-void	*waiter_watching(void *date_tmp);
 
 #endif

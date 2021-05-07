@@ -8,7 +8,6 @@ SRC = main.c \
 	init.c \
 	time.c \
 	ouroboros.c \
-	waiter_watching.c \
 	utils.c
 	
 

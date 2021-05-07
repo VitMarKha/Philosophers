@@ -2,24 +2,16 @@
 
 static	void	init_philo(t_data *data, int argc)
 {
-	int				i;
-	// pthread_mutex_t	*forks;
+	int	i;
 
-	i = -1;
-	// forks = ft_calloc(data->count_philo, sizeof(pthread_mutex_t));
-	// while (++i < data->count_philo)
-	// 	pthread_mutex_init(&forks[i], NULL);
-	// pthread_mutex_init(&data->chat, NULL);
 	data->bunch_forks = sem_open("bunch_forks", O_CREAT, 0777, data->count_philo);
+	data ->waiter_stop = sem_open("waiter_stop", O_CREAT, 0777, 1);
 	data ->chat = sem_open("chat", O_CREAT, 0777, 1);
+	data->pos_philo = 0;
 	i = -1;
 	while (++i < data->count_philo)
 	{
 		data->array_philo[i].num = i;
-		data->array_philo[i].chat = data->chat;
-		data->array_philo[i].bunch_forks = data->bunch_forks;
-		// data->array_philo[i].lfork = &forks[i];
-		// data->array_philo[i].rfork = &forks[(i + 1) % data->count_philo];
 		data->array_philo[i].time_to_die = data->time_to_die;
 		data->array_philo[i].time_to_eat = data->time_to_eat;
 		data->array_philo[i].time_to_sleep = data->time_to_sleep;

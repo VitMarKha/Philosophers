@@ -1,68 +1,44 @@
 #include "philo_two.h"
 
-// static	void	take_fork_odd(t_philo *philo)
-// {
-// 	pthread_mutex_lock(philo->lfork);
-// 	pthread_mutex_lock(philo->chat);
-// 	printf("%zu %d has taken a fork\n",
-// 		get_time(philo->begin_time), philo->num + 1);
-// 	pthread_mutex_unlock(philo->chat);
-// 	pthread_mutex_lock(philo->rfork);
-// 	pthread_mutex_lock(philo->chat);
-// 	printf("%zu %d has taken a fork\n",
-// 		get_time(philo->begin_time), philo->num + 1);
-// 	pthread_mutex_unlock(philo->chat);
-// }
-
-void	take_fork(t_philo *philo)
+void	take_fork(t_data *data, int number)
 {
-	// if (philo->num % 2 == 0)
-	// {
-		sem_wait(philo->bunch_forks);
-		sem_wait(philo->chat);
-		printf("%zu %d has taken a fork\n",
-			get_time(philo->begin_time), philo->num + 1);
-		sem_post(philo->chat);
-		sem_wait(philo->bunch_forks);
-		sem_wait(philo->chat);
-		printf("%zu %d has taken a fork\n",
-			get_time(philo->begin_time), philo->num + 1);
-		sem_post(philo->chat);
-	// }
-	// else
-	// 	take_fork_odd(philo);
+	sem_wait(data->waiter_stop);
+	sem_wait(data->bunch_forks);
+	sem_wait(data->chat);
+	printf("%zu %d has taken a fork\n",
+		get_time(data->array_philo[number].begin_time), data->array_philo[number].num + 1);
+	sem_post(data->chat);
+	sem_wait(data->bunch_forks);
+	sem_wait(data->chat);
+	printf("%zu %d has taken a fork\n",
+		get_time(data->array_philo[number].begin_time), data->array_philo[number].num + 1);
+	sem_post(data->chat);
+	sem_post(data->waiter_stop);
 }
 
-void	put_fork(t_philo *philo)
+void	put_fork(t_data *data, int number)
 {
-	// if (philo->num % 2 == 0)
-	// {
-		sem_post(philo->bunch_forks);
-		sem_post(philo->bunch_forks);
-	// }
-	// else
-	// {
-	// 	pthread_mutex_unlock(philo->lfork);
-	// 	pthread_mutex_unlock(philo->rfork);
-	// }
+	(void)number;
+	sem_post(data->bunch_forks);
+	sem_post(data->bunch_forks);
 }
 
-void	eating(t_philo *philo)
+void	eating(t_data *data, int number)
 {
-	sem_wait(philo->chat);
-	printf("%zu %d is eating\n", get_time(philo->begin_time), philo->num + 1);
-	philo->begin_life = get_time(0);
-	sem_post(philo->chat);
-	my_usleep(philo->time_to_eat);
+	sem_wait(data->chat);
+	printf("%zu %d is eating\n", get_time(data->array_philo[number].begin_time), data->array_philo[number].num + 1);
+	data->array_philo[number].begin_life = get_time(0);
+	sem_post(data->chat);
+	my_usleep(data->time_to_eat);
 }
 
-void	sleeping_thinking(t_philo *philo)
+void	sleeping_thinking(t_data *data, int number)
 {
-	sem_wait(philo->chat);
-	printf("%zu %d is sleeping\n", get_time(philo->begin_time), philo->num + 1);
-	sem_post(philo->chat);
-	my_usleep(philo->time_to_sleep);
-	sem_wait(philo->chat);
-	printf("%zu %d is thinking\n", get_time(philo->begin_time), philo->num + 1);
-	sem_post(philo->chat);
+	sem_wait(data->chat);
+	printf("%zu %d is sleeping\n", get_time(data->array_philo[number].begin_time), data->array_philo[number].num + 1);
+	sem_post(data->chat);
+	my_usleep(data->time_to_sleep);
+	sem_wait(data->chat);
+	printf("%zu %d is thinking\n", get_time(data->array_philo[number].begin_time), data->array_philo[number].num + 1);
+	sem_post(data->chat);
 }
