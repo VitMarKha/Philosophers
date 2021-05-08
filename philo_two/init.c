@@ -4,10 +4,15 @@ static	void	init_philo(t_data *data, int argc)
 {
 	int	i;
 
-	data->bunch_forks = sem_open("bunch_forks", O_CREAT, 0777, data->count_philo);
+	data->bunch_forks = sem_open("bunch_forks", O_CREAT, 0777,
+			data->count_philo);
+	sem_unlink("bunch_forks");
 	data ->waiter_stop = sem_open("waiter_stop", O_CREAT, 0777, 1);
+	sem_unlink("waiter_stop");
+	data ->security = sem_open("security", O_CREAT, 0777, 1);
+	sem_unlink("security");
 	data ->chat = sem_open("chat", O_CREAT, 0777, 1);
-	data->pos_philo = 0;
+	sem_unlink("chat");
 	i = -1;
 	while (++i < data->count_philo)
 	{
@@ -36,5 +41,6 @@ void	init_data(char **argv, int argc, t_data *data)
 	else
 		data->must_eat = 0;
 	data->array_philo = ft_calloc(data->count_philo, sizeof(t_philo *));
+	data->pos_philo = 0;
 	init_philo(data, argc);
 }

@@ -33,6 +33,7 @@ typedef struct s_data
 	sem_t			*chat;
 	sem_t			*bunch_forks;
 	sem_t			*waiter_stop;
+	sem_t			*security;
 
 	t_philo			*array_philo;
 	ssize_t			begin_time;
