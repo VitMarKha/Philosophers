@@ -9,8 +9,6 @@ static	void	init_philo(t_data *data, int argc)
 	sem_unlink("bunch_forks");
 	data->waiter_stop = sem_open("waiter_stop", O_CREAT, 0777, 1);
 	sem_unlink("waiter_stop");
-	data->security = sem_open("security", O_CREAT, 0777, 1);
-	sem_unlink("security");
 	data->chat = sem_open("chat", O_CREAT, 0777, 1);
 	sem_unlink("chat");
 	data->forks = ft_calloc(data->count_philo, sizeof(pid_t));
@@ -27,6 +25,9 @@ static	void	init_philo(t_data *data, int argc)
 			data->array_philo[i].must_eat = -1;
 		data->array_philo[i].begin_time = data->begin_time;
 		data->array_philo[i].begin_life = data->begin_time;
+		data->array_philo[i].chat = data->chat;
+		data->array_philo[i].bunch_forks = data->bunch_forks;
+		data->array_philo[i].waiter_stop = data->waiter_stop;
 	}
 }
 

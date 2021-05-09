@@ -8,7 +8,8 @@
 # include <stdlib.h>
 # include <semaphore.h>
 # include <sys/time.h>
-#include <sys/wait.h>
+# include <sys/wait.h>
+# include <signal.h>
 
 typedef struct s_philo
 {
@@ -21,11 +22,16 @@ typedef struct s_philo
 	ssize_t			must_eat;
 	ssize_t			begin_time;
 	ssize_t			begin_life;
+
+	sem_t			*chat;
+	sem_t			*bunch_forks;
+	sem_t			*waiter_stop;
 }					t_philo;
 
 typedef struct s_data
 {
 	int				pos_philo;
+	int				status;
 	int				count_philo;
 	ssize_t			time_to_die;
 	ssize_t			time_to_eat;
@@ -34,8 +40,8 @@ typedef struct s_data
 	sem_t			*chat;
 	sem_t			*bunch_forks;
 	sem_t			*waiter_stop;
-	sem_t			*security;
 	pid_t			*forks;
+	pthread_t		cracken;
 
 	t_philo			*array_philo;
 	ssize_t			begin_time;
@@ -51,13 +57,13 @@ ssize_t	get_time(ssize_t begin_time);
 
 void	my_usleep(ssize_t time);
 
-void	take_fork(t_data *data, int number);
+void	take_fork(t_philo *philo, int number);
 
-void	put_fork(t_data *data, int number);
+void	put_fork(t_philo *philo, int number);
 
-void	eating(t_data *data, int number);
+void	eating(t_philo *philo, int number);
 
-void	sleeping_thinking(t_data *data, int number);
+void	sleeping_thinking(t_philo *philo, int number);
 
 int		ft_atoi(const char *str);
 

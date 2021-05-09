@@ -1,87 +1,95 @@
 #include "philo_three.h"
 
-static	void	*philo(void	*data_tmp)
+static	void	*philo(void	*philo_tmp)
 {
-	int		number;
-	t_data	*data;
+	t_philo	*philo;
 
-	data = (t_data *)data_tmp;
-	sem_wait(data->security);
-	number = data->pos_philo++;
-	sem_post(data->security);
+	philo = (t_philo *)philo_tmp;
+	pthread_detach(philo->thread);
 	while (1)
 	{
-		take_fork(data, number);
-		eating(data, number);
-		put_fork(data, number);
-		if (data->array_philo[number].must_eat != -1)
+		take_fork(philo, philo->num);
+		eating(philo, philo->num);
+		put_fork(philo, philo->num);
+		if (philo->must_eat != -1)
 		{
-			if (data->array_philo[number].must_eat != 0)
-				--data->array_philo[number].must_eat;
+			if (philo->must_eat != 0)
+				--philo->must_eat;
 		}
-		sleeping_thinking(data, number);
+		sleeping_thinking(philo, philo->num);
 	}
 	return (NULL);
 }
 
-static	int	check_for_death(t_data *data, int *did_everyone_eat, int *i)
+static	void	kill_all(t_data *data)
 {
-	if (data->time_to_die < get_time(data->array_philo[*i].begin_life))
-	{
-		sem_wait(data->chat);
-		printf("%zu %d died\n",
-			get_time(data->array_philo[*i].begin_time), *i + 1);
-		return (1);
-	}
-	if (data->array_philo[*i].must_eat == 0)
-		--*did_everyone_eat;
-	return (0);
+	int	i;
+
+	i = -1;
+	while (++i < data->count_philo)
+		kill(data->forks[i], 2);
 }
 
-static	void	*monitoring(void *date_tmp)
+static	void	*monitoring(void *philo_tmp)
 {
-	int		i;
-	int		did_everyone_eat;
-	t_data	*data;
+	t_philo	*philo;
 
-	data = date_tmp;
+	philo = philo_tmp;
 	while (1)
 	{
-		i = -1;
-		did_everyone_eat = data->count_philo;
-		while (++i < data->count_philo)
+		if (philo->time_to_die < get_time(philo->begin_life))
 		{
-			if (check_for_death(data, &did_everyone_eat, &i))
-				return (NULL);
+			sem_wait(philo->chat);
+			printf("%zu %d died\n",
+				get_time(philo->begin_time), philo->num + 1);
+			return (NULL);
 		}
-		if (did_everyone_eat == 0)
+		if (philo->must_eat == 0)
 		{
-			sem_wait(data->chat);
+			printf("I AM HERE\n");
+			sem_wait(philo->chat);
+			sem_wait(philo->waiter_stop);
 			return (NULL);
 		}
 	}
 	return (NULL);
 }
 
-static	void	start_philo(t_data *data)
+static	void	start_philo(t_data *data, int argc)
 {
-	int				i;
-	pthread_t		cracken;
+	int	i;
 
 	i = -1;
-	pthread_create(&cracken, NULL, monitoring, (void *)data);
 	while (++i < data->count_philo)
 	{
-		data->forks[i] = fork();
-		if (data->forks[i] == 0)
+		if ((data->forks[i] = fork()) == -1)
+			return ;
+		else if (data->forks[i] == 0)
 		{
-			printf("FORK = %d\n", i);
+			usleep(300);
+			data->array_philo[i].num = i;
+			data->array_philo[i].time_to_die = data->time_to_die;
+			data->array_philo[i].time_to_eat = data->time_to_eat;
+			data->array_philo[i].time_to_sleep = data->time_to_sleep;
+			if (argc == 6)
+				data->array_philo[i].must_eat = data->must_eat;
+			else
+				data->array_philo[i].must_eat = -1;
+			data->array_philo[i].chat = data->chat;
+			data->array_philo[i].bunch_forks = data->bunch_forks;
+			data->array_philo[i].waiter_stop = data->waiter_stop;
 			data->pos_philo = i;
-			pthread_create(&data->array_philo[i].thread, NULL, philo, (void *)data);
-			pthread_join(data->array_philo[i].thread, NULL);
+			data->array_philo[i].begin_time = get_time(0);
+			data->array_philo[i].begin_life = get_time(0);
+			pthread_create(&data->cracken, NULL, monitoring, (void *)&data->array_philo[i]);
+			pthread_create(&data->array_philo[i].thread, NULL, philo, (void *)&data->array_philo[i]);
+			pthread_join(data->cracken, NULL);
+			kill_all(data);
 		}
 	}
-	pthread_join(cracken, NULL);
+	i = -1;
+	while (++i < data->count_philo)
+		waitpid(data->forks[i], &data->status, 0);
 }
 
 int	main(int argc, char **argv)
@@ -92,6 +100,6 @@ int	main(int argc, char **argv)
 		return (1);
 	else
 		init_data(argv, argc, &data);
-	start_philo(&data);
+	start_philo(&data, argc);
 	return (0);
 }
