@@ -14,7 +14,11 @@
 typedef struct s_philo
 {
 	int				num;
+	int				argc;
+	int				how_many_us;
+	int				i_ate;
 	pthread_t		thread;
+	pid_t			*pid;
 
 	ssize_t			time_to_die;
 	ssize_t			time_to_eat;
@@ -26,6 +30,7 @@ typedef struct s_philo
 	sem_t			*chat;
 	sem_t			*bunch_forks;
 	sem_t			*waiter_stop;
+	sem_t			*eat;
 }					t_philo;
 
 typedef struct s_data
@@ -40,8 +45,10 @@ typedef struct s_data
 	sem_t			*chat;
 	sem_t			*bunch_forks;
 	sem_t			*waiter_stop;
-	pid_t			*forks;
-	pthread_t		cracken;
+	sem_t			*eat;
+	pid_t			*pids;
+	pthread_t		monitoring_die;
+	pthread_t		monitoring_eat;
 
 	t_philo			*array_philo;
 	ssize_t			begin_time;
@@ -59,7 +66,7 @@ void	my_usleep(ssize_t time);
 
 void	take_fork(t_philo *philo, int number);
 
-void	put_fork(t_philo *philo, int number);
+void	put_fork(t_philo *philo);
 
 void	eating(t_philo *philo, int number);
 

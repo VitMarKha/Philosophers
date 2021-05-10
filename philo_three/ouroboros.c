@@ -16,9 +16,8 @@ void	take_fork(t_philo *philo, int number)
 	sem_post(philo->waiter_stop);
 }
 
-void	put_fork(t_philo *philo, int number)
+void	put_fork(t_philo *philo)
 {
-	(void)number;
 	sem_post(philo->bunch_forks);
 	sem_post(philo->bunch_forks);
 }
