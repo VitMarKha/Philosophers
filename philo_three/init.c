@@ -1,6 +1,6 @@
 #include "philo_three.h"
 
-size_t	ft_strlen(const char *s)
+static	size_t	ft_strlen(const char *s)
 {
 	size_t i;
 
@@ -10,7 +10,7 @@ size_t	ft_strlen(const char *s)
 	return (i);
 }
 
-char	*ft_strjoin(char const *s1, char const *s2)
+static	char	*ft_strjoin(char const *s1, char const *s2)
 {
 	char	*p;
 	int		i;
@@ -38,7 +38,7 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	return (p);
 }
 
-char	*ft_itoa(int nbr)
+static	char	*ft_itoa(int nbr)
 {
 	int		temp;
 	int		size;
@@ -86,32 +86,10 @@ static	void	init_philo(t_data *data, int argc)
 			//удалить строку в джойне
 			data->array_philo[i].eat = sem_open(ft_strjoin("eat", ft_itoa(i)), O_CREAT, 0777, 1);
 			sem_unlink(ft_strjoin("eat", ft_itoa(i)));
-			write(1, "!\n", 2);
 			sem_wait(data->array_philo[i].eat);
 		}
 	}
 	data->pids = ft_calloc(data->count_philo, sizeof(pid_t));
-	i = -1;
-	while (++i < data->count_philo)
-	{
-		data->array_philo[i].num = i;
-		data->array_philo[i].i_ate = 0;
-		data->array_philo[i].argc = argc;
-		data->array_philo[i].time_to_die = data->time_to_die;
-		data->array_philo[i].time_to_eat = data->time_to_eat;
-		data->array_philo[i].time_to_sleep = data->time_to_sleep;
-		if (argc == 6)
-		{
-			data->array_philo[i].must_eat = data->must_eat;
-		}
-		else
-			data->array_philo[i].must_eat = -1;
-		data->array_philo[i].begin_time = data->begin_time;
-		data->array_philo[i].begin_life = data->begin_time;
-		data->array_philo[i].chat = data->chat;
-		data->array_philo[i].bunch_forks = data->bunch_forks;
-		data->array_philo[i].waiter_stop = data->waiter_stop;
-	}
 }
 
 void	init_data(char **argv, int argc, t_data *data)
@@ -124,8 +102,7 @@ void	init_data(char **argv, int argc, t_data *data)
 	if (argc == 6)
 		data->must_eat = ft_atoi(argv[5]);
 	else
-		data->must_eat = 0;
+		data->must_eat = -1;
 	data->array_philo = ft_calloc(data->count_philo, sizeof(t_philo *));
-	data->pos_philo = 0;
 	init_philo(data, argc);
 }

@@ -86,7 +86,6 @@ static	void	start_philo(t_data *data, int argc)
 		{
 			usleep(300);
 			data->array_philo[i].num = i;
-			data->array_philo[i].how_many_us = data->count_philo;
 			data->array_philo[i].pid = &data->pids[i];
 			data->array_philo[i].time_to_die = data->time_to_die;
 			data->array_philo[i].time_to_eat = data->time_to_eat;
@@ -102,7 +101,6 @@ static	void	start_philo(t_data *data, int argc)
 			data->array_philo[i].bunch_forks = data->bunch_forks;
 			data->array_philo[i].waiter_stop = data->waiter_stop;
 			data->array_philo[i].argc = argc;
-			data->pos_philo = i;
 			data->array_philo[i].i_ate = 0;
 			data->array_philo[i].begin_time = get_time(0);
 			data->array_philo[i].begin_life = get_time(0);
@@ -115,7 +113,7 @@ static	void	start_philo(t_data *data, int argc)
 	}
 	i = -1;
 	while (++i < data->count_philo)
-		waitpid(data->pids[i], &data->status, 0);
+		waitpid(data->pids[i], &data->status_pid, 0);
 }
 
 int	main(int argc, char **argv)
