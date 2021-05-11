@@ -72,6 +72,8 @@ void	*philo(void	*philo_tmp);
 
 void	kill_all(t_data *data);
 
+void	checking_arguments(char **argv, int argc);
+
 size_t	ft_strlen(const char *s);
 
 int		ft_atoi(const char *str);

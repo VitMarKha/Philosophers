@@ -1,5 +1,29 @@
 #include "philo_two.h"
 
+static	void	checking_arg(char *str)
+{
+	int	i;
+
+	i = -1;
+	while (str[++i] != '\0')
+	{
+		if (str[i] < '0' || str[i] > '9')
+		{
+			printf("Invalid arguments\n");
+			exit(0);
+		}
+	}
+}
+
+static	void	checking_arguments(char **argv, int argc)
+{
+	int	i;
+
+	i = 0;
+	while (++i < argc)
+		checking_arg(argv[i]);
+}
+
 static	void	init_philo(t_data *data, int argc)
 {
 	int	i;
@@ -31,6 +55,7 @@ static	void	init_philo(t_data *data, int argc)
 
 void	init_data(char **argv, int argc, t_data *data)
 {
+	checking_arguments(argv, argc);
 	data->begin_time = get_time(0);
 	data->count_philo = ft_atoi(argv[1]);
 	data->time_to_die = ft_atoi(argv[2]);

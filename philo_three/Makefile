@@ -8,6 +8,7 @@ SRC = main.c \
 	init.c \
 	time.c \
 	ouroboros.c \
+	checking.c \
 	utils_one.c \
 	utils_two.c
 	

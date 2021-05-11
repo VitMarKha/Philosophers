@@ -58,6 +58,7 @@ void	init_philo(t_data *data, int argc, int i)
 
 void	init_data(char **argv, int argc, t_data *data)
 {
+	checking_arguments(argv, argc);
 	data->begin_time = get_time(0);
 	data->count_philo = ft_atoi(argv[1]);
 	data->time_to_die = ft_atoi(argv[2]);
