@@ -1,6 +1,5 @@
 #include "philo_three.h"
 
-
 static	void	take_fork(t_philo *philo, int number)
 {
 	sem_wait(philo->waiter_stop);
@@ -62,8 +61,8 @@ void	*philo(void	*philo_tmp)
 			--philo->must_eat;
 			if (philo->must_eat == 0)
 			{
-				printf("I AM FULL\n");
 				sem_post(philo->eat);
+				exit(0);
 			}
 		}
 		sleeping_thinking(philo, philo->num);

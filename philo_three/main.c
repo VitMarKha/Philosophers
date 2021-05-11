@@ -1,15 +1,5 @@
 #include "philo_three.h"
 
-static	void	kill_all(t_data *data)
-{
-	int	i;
-
-	i = -1;
-	while (++i < data->count_philo)
-		kill(data->pids[i], 2);
-	free(data->pids);
-}
-
 static	void	*monitoring_die(void *philo_tmp)
 {
 	t_philo	*philo;
@@ -31,19 +21,29 @@ static	void	*monitoring_die(void *philo_tmp)
 
 static	void	*monitoring_eat(void *data_tmp)
 {
-	int i;
+	int		i;
 	t_data	*data;
 
 	data = (t_data *)data_tmp;
 	i = -1;
 	while (++i < data->count_philo)
-	{
 		sem_wait(data->array_philo[i].eat);
-		// write(1, "I AM HERE\n", 11);
-	}
-	// sem_wait(data->chat);
-	// kill_all(data);
+	sem_wait(data->chat);
+	kill_all(data);
 	return (NULL);
+}
+
+static	void	start_process(t_data *data, int i, int argc)
+{
+	usleep(300);
+	init_philo(data, argc, i);
+	pthread_create(&data->array_philo[i].thread, NULL, philo,
+		(void *)&data->array_philo[i]);
+	pthread_create(&data->monitoring_die, NULL, monitoring_die,
+		(void *)&data->array_philo[i]);
+	pthread_join(data->monitoring_eat, NULL);
+	pthread_join(data->monitoring_die, NULL);
+	kill_all(data);
 }
 
 static	void	start_philo(t_data *data, int argc)
@@ -53,20 +53,17 @@ static	void	start_philo(t_data *data, int argc)
 	i = -1;
 	while (++i < data->count_philo)
 	{
-		if ((data->pids[i] = fork()) == -1)
+		data->pids[i] = fork();
+		if (data->pids[i] == -1)
 			return ;
 		if (data->pids[i] > 0)
-			pthread_create(&data->monitoring_eat, NULL, monitoring_eat, (void *)data);
-		if (data->pids[i] == 0)
 		{
-			usleep(300);
-			init_philo(data, argc, i);
-			pthread_create(&data->array_philo[i].thread, NULL, philo, (void *)&data->array_philo[i]);
-			pthread_create(&data->monitoring_die, NULL, monitoring_die, (void *)&data->array_philo[i]);
-			pthread_join(data->monitoring_die, NULL);
-			pthread_join(data->monitoring_eat, NULL);
-			kill_all(data);
+			if (argc == 6)
+				pthread_create(&data->monitoring_eat, NULL,
+					monitoring_eat, (void *)data);
 		}
+		if (data->pids[i] == 0)
+			start_process(data, i, argc);
 	}
 	i = -1;
 	while (++i < data->count_philo)

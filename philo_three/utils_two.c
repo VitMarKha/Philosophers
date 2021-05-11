@@ -2,7 +2,7 @@
 
 size_t	ft_strlen(const char *s)
 {
-	size_t i;
+	size_t	i;
 
 	i = 0;
 	while (s[i] != '\0')
@@ -38,6 +38,19 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	return (p);
 }
 
+static	void	ft_itoa_while(int *nbr, int *sign, char **str)
+{
+	while (*nbr)
+	{
+		if (*sign)
+			*sign = -1;
+		else
+			*sign = 1;
+		**str-- = (*nbr % 10) * *sign + '0';
+		*nbr /= 10;
+	}
+}
+
 char	*ft_itoa(int nbr)
 {
 	int		temp;
@@ -48,9 +61,11 @@ char	*ft_itoa(int nbr)
 	temp = nbr;
 	size = 1;
 	sign = nbr < 0;
-	while (temp /= 10)
+	temp /= 10;
+	while (temp)
 		size++;
-	if (!(str = malloc(sizeof(char) * (size + 1 + sign))))
+	str = malloc(sizeof(char) * (size + 1 + sign));
+	if (!str)
 		return (NULL);
 	if (sign)
 		*str++ = '-';
@@ -58,10 +73,16 @@ char	*ft_itoa(int nbr)
 	*str-- = '\0';
 	if (nbr == 0)
 		*str-- = '0';
-	while (nbr)
-	{
-		*str-- = (nbr % 10) * (sign ? -1 : 1) + '0';
-		nbr /= 10;
-	}
+	ft_itoa_while(&nbr, &sign, &str);
 	return (str + 1 - sign);
+}
+
+void	kill_all(t_data *data)
+{
+	int	i;
+
+	i = -1;
+	while (++i < data->count_philo)
+		kill(data->pids[i], 9);
+	free(data->pids);
 }

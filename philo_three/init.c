@@ -1,10 +1,22 @@
 #include "philo_three.h"
 
-static	void	init_semaphore(t_data *data, int argc)
+static	void	set_semaphore(t_data *data, int i)
 {
-	int		i;
 	char	*str;
 	char	*num;
+
+	num = ft_itoa(i);
+	str = ft_strjoin("eat", num);
+	data->array_philo[i].eat = sem_open(str, O_CREAT, 0777, 1);
+	sem_unlink(str);
+	free(str);
+	free(num);
+	sem_wait(data->array_philo[i].eat);
+}
+
+static	void	init_semaphore(t_data *data, int argc)
+{
+	int	i;
 
 	data->bunch_forks = sem_open("bunch_forks", O_CREAT, 0777,
 			data->count_philo);
@@ -18,15 +30,7 @@ static	void	init_semaphore(t_data *data, int argc)
 		data->eat = ft_calloc(data->count_philo, sizeof(sem_t *));
 		i = -1;
 		while (++i < data->count_philo)
-		{
-			num = ft_itoa(i);
-			str = ft_strjoin("eat", num);
-			data->array_philo[i].eat = sem_open(str, O_CREAT, 0777, 1);
-			sem_unlink(str);
-			free(str);
-			free(num);
-			sem_wait(data->array_philo[i].eat);
-		}
+			set_semaphore(data, i);
 	}
 }
 
@@ -48,7 +52,6 @@ void	init_philo(t_data *data, int argc, int i)
 	data->array_philo[i].bunch_forks = data->bunch_forks;
 	data->array_philo[i].waiter_stop = data->waiter_stop;
 	data->array_philo[i].argc = argc;
-	data->array_philo[i].i_ate = 0;
 	data->array_philo[i].begin_time = get_time(0);
 	data->array_philo[i].begin_life = get_time(0);
 }

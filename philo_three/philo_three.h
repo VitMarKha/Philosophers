@@ -1,6 +1,6 @@
-#ifndef PHILO_TWO_H
+#ifndef PHILO_THREE_H
 
-# define PHILO_TWO_H
+# define PHILO_THREE_H
 
 # include <stdio.h>
 # include <unistd.h>
@@ -15,7 +15,6 @@ typedef struct s_philo
 {
 	int				num;
 	int				argc;
-	int				i_ate;
 
 	pthread_t		thread;
 	pid_t			*pid;
@@ -70,6 +69,8 @@ ssize_t	get_time(ssize_t begin_time);
 void	my_usleep(ssize_t time);
 
 void	*philo(void	*philo_tmp);
+
+void	kill_all(t_data *data);
 
 size_t	ft_strlen(const char *s);
 

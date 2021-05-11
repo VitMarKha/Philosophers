@@ -50,7 +50,8 @@ void	put_fork(t_philo *philo)
 void	eating(t_philo *philo)
 {
 	pthread_mutex_lock(philo->chat);
-	printf("\x1b[32m%zu %d is eating\n", get_time(philo->begin_time), philo->num + 1);
+	printf("\x1b[32m%zu %d is eating\n",
+		get_time(philo->begin_time), philo->num + 1);
 	philo->begin_life = get_time(0);
 	pthread_mutex_unlock(philo->chat);
 	my_usleep(philo->time_to_eat);
@@ -59,10 +60,12 @@ void	eating(t_philo *philo)
 void	sleeping_thinking(t_philo *philo)
 {
 	pthread_mutex_lock(philo->chat);
-	printf("\x1b[34m%zu %d is sleeping\n", get_time(philo->begin_time), philo->num + 1);
+	printf("\x1b[34m%zu %d is sleeping\n",
+		get_time(philo->begin_time), philo->num + 1);
 	pthread_mutex_unlock(philo->chat);
 	my_usleep(philo->time_to_sleep);
 	pthread_mutex_lock(philo->chat);
-	printf("\x1b[35m%zu %d is thinking\n", get_time(philo->begin_time), philo->num + 1);
+	printf("\x1b[35m%zu %d is thinking\n",
+		get_time(philo->begin_time), philo->num + 1);
 	pthread_mutex_unlock(philo->chat);
 }
