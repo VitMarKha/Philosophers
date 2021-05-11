@@ -1,30 +1,5 @@
 #include "philo_three.h"
 
-static	void	*philo(void	*philo_tmp)
-{
-	t_philo	*philo;
-
-	philo = (t_philo *)philo_tmp;
-	pthread_detach(philo->thread);
-	while (1)
-	{
-		take_fork(philo, philo->num);
-		eating(philo, philo->num);
-		put_fork(philo);
-		if (philo->must_eat != -1)
-		{
-			--philo->must_eat;
-			if (philo->must_eat == 0)
-			{
-				printf("I AM FULL\n");
-				sem_post(philo->eat);
-			}
-		}
-		sleeping_thinking(philo, philo->num);
-	}
-	return (NULL);
-}
-
 static	void	kill_all(t_data *data)
 {
 	int	i;
@@ -45,7 +20,7 @@ static	void	*monitoring_die(void *philo_tmp)
 		if (philo->time_to_die < get_time(philo->begin_life))
 		{
 			sem_wait(philo->chat);
-			printf("%zu %d died\n",
+			printf("\x1b[31m%zu %d died\n",
 				get_time(philo->begin_time), philo->num + 1);
 			kill(*philo->pid, 2);
 			return (NULL);

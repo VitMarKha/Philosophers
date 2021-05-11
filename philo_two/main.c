@@ -29,7 +29,7 @@ static	int	check_for_death(t_data *data, int *did_everyone_eat, int *i)
 	if (data->time_to_die < get_time(data->array_philo[*i].begin_life))
 	{
 		sem_wait(data->chat);
-		printf("%zu %d died\n",
+		printf("\x1b[31m%zu %d died\n",
 			get_time(data->array_philo[*i].begin_time), *i + 1);
 		return (1);
 	}

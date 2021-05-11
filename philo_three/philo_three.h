@@ -69,13 +69,7 @@ ssize_t	get_time(ssize_t begin_time);
 
 void	my_usleep(ssize_t time);
 
-void	take_fork(t_philo *philo, int number);
-
-void	put_fork(t_philo *philo);
-
-void	eating(t_philo *philo, int number);
-
-void	sleeping_thinking(t_philo *philo, int number);
+void	*philo(void	*philo_tmp);
 
 size_t	ft_strlen(const char *s);
 
