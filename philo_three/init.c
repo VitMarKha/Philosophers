@@ -66,9 +66,11 @@ static	char	*ft_itoa(int nbr)
 	return (str + 1 - sign);
 }
 
-static	void	init_philo(t_data *data, int argc)
+static	void	init_semaphore(t_data *data, int argc)
 {
-	int	i;
+	int		i;
+	char	*str;
+	char	*num;
 
 	data->bunch_forks = sem_open("bunch_forks", O_CREAT, 0777,
 			data->count_philo);
@@ -83,13 +85,15 @@ static	void	init_philo(t_data *data, int argc)
 		i = -1;
 		while (++i < data->count_philo)
 		{
-			//удалить строку в джойне
-			data->array_philo[i].eat = sem_open(ft_strjoin("eat", ft_itoa(i)), O_CREAT, 0777, 1);
-			sem_unlink(ft_strjoin("eat", ft_itoa(i)));
+			num = ft_itoa(i);
+			str = ft_strjoin("eat", num);
+			data->array_philo[i].eat = sem_open(str, O_CREAT, 0777, 1);
+			sem_unlink(str);
+			free(str);
+			free(num);
 			sem_wait(data->array_philo[i].eat);
 		}
 	}
-	data->pids = ft_calloc(data->count_philo, sizeof(pid_t));
 }
 
 void	init_data(char **argv, int argc, t_data *data)
@@ -104,5 +108,6 @@ void	init_data(char **argv, int argc, t_data *data)
 	else
 		data->must_eat = -1;
 	data->array_philo = ft_calloc(data->count_philo, sizeof(t_philo *));
-	init_philo(data, argc);
+	data->pids = ft_calloc(data->count_philo, sizeof(pid_t));
+	init_semaphore(data, argc);
 }
