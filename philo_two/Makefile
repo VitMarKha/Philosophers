@@ -9,7 +9,6 @@ SRC = main.c \
 	time.c \
 	ouroboros.c \
 	utils.c
-	
 
 OBJ = $(SRC:.c=.o)
 

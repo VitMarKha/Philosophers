@@ -8,9 +8,9 @@ SRC = main.c \
 	init.c \
 	time.c \
 	ouroboros.c \
-	utils.c
+	utils_one.c \
+	utils_two.c
 	
-
 OBJ = $(SRC:.c=.o)
 
 CC = gcc

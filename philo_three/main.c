@@ -85,25 +85,7 @@ static	void	start_philo(t_data *data, int argc)
 		if (data->pids[i] == 0)
 		{
 			usleep(300);
-			data->array_philo[i].num = i;
-			data->array_philo[i].pid = &data->pids[i];
-			data->array_philo[i].time_to_die = data->time_to_die;
-			data->array_philo[i].time_to_eat = data->time_to_eat;
-			data->array_philo[i].time_to_sleep = data->time_to_sleep;
-			if (argc == 6)
-			{
-				data->array_philo[i].must_eat = data->must_eat;
-				data->array_philo[i].eat = &data->eat[i];
-			}
-			else
-				data->array_philo[i].must_eat = -1;
-			data->array_philo[i].chat = data->chat;
-			data->array_philo[i].bunch_forks = data->bunch_forks;
-			data->array_philo[i].waiter_stop = data->waiter_stop;
-			data->array_philo[i].argc = argc;
-			data->array_philo[i].i_ate = 0;
-			data->array_philo[i].begin_time = get_time(0);
-			data->array_philo[i].begin_life = get_time(0);
+			init_philo(data, argc, i);
 			pthread_create(&data->array_philo[i].thread, NULL, philo, (void *)&data->array_philo[i]);
 			pthread_create(&data->monitoring_die, NULL, monitoring_die, (void *)&data->array_philo[i]);
 			pthread_join(data->monitoring_die, NULL);

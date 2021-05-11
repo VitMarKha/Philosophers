@@ -63,6 +63,8 @@ void	*ft_calloc(size_t count, size_t size);
 
 void	init_data(char **argv, int argc, t_data *data);
 
+void	init_philo(t_data *data, int argc, int i);
+
 ssize_t	get_time(ssize_t begin_time);
 
 void	my_usleep(ssize_t time);
@@ -75,8 +77,14 @@ void	eating(t_philo *philo, int number);
 
 void	sleeping_thinking(t_philo *philo, int number);
 
+size_t	ft_strlen(const char *s);
+
 int		ft_atoi(const char *str);
 
 void	*ft_calloc(size_t count, size_t size);
+
+char	*ft_strjoin(char const *s1, char const *s2);
+
+char	*ft_itoa(int nbr);
 
 #endif
