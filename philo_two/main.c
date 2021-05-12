@@ -85,9 +85,15 @@ int	main(int argc, char **argv)
 	t_data	data;
 
 	if (argc != 6 && argc != 5)
+	{
+		printf("Invalid arguments\n");
 		return (1);
+	}
 	else
-		init_data(argv, argc, &data);
+	{
+		if (init_data(argv, argc, &data))
+			return (1);
+	}
 	start_philo(&data);
 	return (0);
 }

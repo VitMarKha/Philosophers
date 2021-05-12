@@ -60,7 +60,7 @@ int		ft_atoi(const char *str);
 
 void	*ft_calloc(size_t count, size_t size);
 
-void	init_data(char **argv, int argc, t_data *data);
+int		init_data(char **argv, int argc, t_data *data);
 
 void	init_philo(t_data *data, int argc, int i);
 
@@ -72,7 +72,7 @@ void	*philo(void	*philo_tmp);
 
 void	kill_all(t_data *data);
 
-void	checking_arguments(char **argv, int argc);
+int		checking_arguments(char **argv, int argc);
 
 size_t	ft_strlen(const char *s);
 

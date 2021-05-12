@@ -56,9 +56,10 @@ void	init_philo(t_data *data, int argc, int i)
 	data->array_philo[i].begin_life = get_time(0);
 }
 
-void	init_data(char **argv, int argc, t_data *data)
+int	init_data(char **argv, int argc, t_data *data)
 {
-	checking_arguments(argv, argc);
+	if (checking_arguments(argv, argc))
+		return (1);
 	data->begin_time = get_time(0);
 	data->count_philo = ft_atoi(argv[1]);
 	data->time_to_die = ft_atoi(argv[2]);
@@ -71,4 +72,5 @@ void	init_data(char **argv, int argc, t_data *data)
 	data->array_philo = ft_calloc(data->count_philo, sizeof(t_philo *));
 	data->pids = ft_calloc(data->count_philo, sizeof(pid_t));
 	init_semaphore(data, argc);
+	return (0);
 }

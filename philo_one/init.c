@@ -1,6 +1,6 @@
 #include "philo_one.h"
 
-static	void	checking_arg(char *str)
+static	int	checking_arg(char *str)
 {
 	int	i;
 
@@ -10,18 +10,23 @@ static	void	checking_arg(char *str)
 		if (str[i] < '0' || str[i] > '9')
 		{
 			printf("Invalid arguments\n");
-			exit(0);
+			return (1);
 		}
 	}
+	return (0);
 }
 
-static	void	checking_arguments(char **argv, int argc)
+static	int	checking_arguments(char **argv, int argc)
 {
 	int	i;
 
 	i = 0;
 	while (++i < argc)
-		checking_arg(argv[i]);
+	{
+		if (checking_arg(argv[i]))
+			return (1);
+	}
+	return (0);
 }
 
 static	void	init_philo(t_data *data, int argc)
@@ -53,9 +58,10 @@ static	void	init_philo(t_data *data, int argc)
 	}
 }
 
-void	init_data(char **argv, int argc, t_data *data)
+int	init_data(char **argv, int argc, t_data *data)
 {
-	checking_arguments(argv, argc);
+	if (checking_arguments(argv, argc))
+		return (1);
 	data->begin_time = get_time(0);
 	data->count_philo = ft_atoi(argv[1]);
 	data->time_to_die = ft_atoi(argv[2]);
@@ -67,4 +73,5 @@ void	init_data(char **argv, int argc, t_data *data)
 		data->must_eat = 0;
 	data->array_philo = ft_calloc(data->count_philo, sizeof(t_philo *));
 	init_philo(data, argc);
+	return (0);
 }

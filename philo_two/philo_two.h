@@ -46,7 +46,7 @@ int		ft_atoi(const char *str);
 
 void	*ft_calloc(size_t count, size_t size);
 
-void	init_data(char **argv, int argc, t_data *data);
+int		init_data(char **argv, int argc, t_data *data);
 
 ssize_t	get_time(ssize_t begin_time);
 
