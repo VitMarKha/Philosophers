@@ -62,7 +62,7 @@ We will write 3 different programs, but they will have the same basic rules:
 * They have no states in memory but the number of available forks is represented by a semaphore.
 * Each philosopher should be a process and the main process should not be a philoso- pher.
 
-## Using
+## Usage
 
 We go to the folder of any of the tasks, write ``make``, we can run the program.
 Commands for checking the operation:
